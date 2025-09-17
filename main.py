@@ -516,8 +516,8 @@ def main():
         bot = AIPostBot()
         bot.start_scheduler()
         
-        # Get port from environment (Render.com sets PORT)
-        port = int(os.getenv('PORT', 10000))
+        # Get port from environment (Render.com sets PORT, Replit uses 5000)
+        port = int(os.getenv('PORT', 5000))
         
         # Start Flask web server
         logger.info(f"🌐 Starting web server on 0.0.0.0:{port}")
