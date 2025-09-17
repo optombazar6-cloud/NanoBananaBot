@@ -42,28 +42,32 @@ class AIPostBot:
         # Initialize Telegram API URL
         self.telegram_api_url = f"https://api.telegram.org/bot{self.telegram_bot_token}"
         
-        # AI topics in Uzbek
+        # Qiziqarli AI mavzulari va promptlari
         self.ai_topics = [
-            "Prompt engineering nima? AI ga qanday buyruq berish kerak?",
-            "ChatGPT va Gemini farqi nima? Qaysi biri yaxshi?",
-            "Midjourney qanday ishlaydi? Rasm generatsiyasi uchun eng yaxshi promptlar",
-            "AI bilan qanday dasturlash qilish mumkin? Python + AI misoli",
-            "AI qanday o'qiydi? Neuronlar nima?",
-            "Stable Diffusion vs DALL·E 3: qaysi rasm yaxshiroq?",
-            "AI bilan CV yozish — qanday prompt berish kerak?",
-            "AI yordamida video script yozish — qo'lda emas!",
-            "AI bilan o'zbek tilida matn yozish — qanday muvaffaqiyatli?",
-            "AI qanday o'qishni o'rgatadi? O'qituvchi o'rniga AI?",
-            "AI bilan blog yozish — 1 daqiqada 500 so'z!",
-            "AI qanday xatolar qiladi? Va ularni qanday tuzatish mumkin?",
-            "AI bilan rasmga sarlavha yozish — promptlar namunalari",
-            "AI bilan dastur yozish — kodni tushuntirish",
-            "AI bilan tarjima qilish — qanchalik aniqlik?",
-            "AI bilan musiqa yaratish — qanday?",
-            "AI bilan o'yin yaratish — qanday dasturlash kerak?",
-            "AI bilan biznes fikrlarini yaratish — 10 ta fikr!",
-            "AI bilan kunlik reja tuzish — qanday prompt berish kerak?",
-            "AI ni o'rganish — boshlang'ich darajada nimalar kerak?"
+            "🎯 Prompt engineering sirli formulasi — AI dan 10x yaxshi natija olish yo'llari",
+            "💸 AI bilan pul ishlash — real misollar va bosqichma-bosqich yo'riqnoma",
+            "🎨 Midjourney va DALL-E dan ajoyib rasmlar — professional promptlar va triklar",
+            "💻 ChatGPT bilan dasturlash — zero dan hero gacha yo'l",
+            "📈 AI bilan biznes-ideya yaratish — startup uchun 100 ta fikr 1 daqiqada",
+            "📝 CV yozishda AI mahorati — HR ni hayratda qoldiradigan resume yaratish",
+            "🎬 AI video yaratish — YouTube uchun kontentni 5 daqiqada tayyorlash",
+            "📚 O'zbek tilida AI — ChatGPT ga o'zbekcha qanday gaplashish o'rgatish?",
+            "🔥 AI xatolarini bartaraf etish — nima uchun javob noto'g'ri va qanday tuzatish?",
+            "🚀 AI bilan startup ochish — texnologiya orqali biznes qurish sirlari",
+            "📸 AI rasm promptlari kolleksiyasi — har kuni yangi tasvirlar yaratish",
+            "💡 Neural tarmoqlar oddiy tilda — 5 yoshli bolaga tushuntirish mumkin!",
+            "⚡ GPT-4 vs Gemini vs Claude — qaysi biri eng zo'ri? Real test natijalar",
+            "🎵 AI musiqa yaratish — hit qo'shiq yozish uchun professional yo'riqnoma",
+            "🎮 AI bilan o'yin yaratish — kodlashmasdan o'yin yasash mumkinmi?",
+            "📊 AI bilan ma'lumot tahlili — Excel dan 100x tezroq ishlash usullari",
+            "🌍 AI tarjimon — 100+ tilda professional tarjima qilish sirlari",
+            "📱 AI chat-bot yaratish — Telegram uchun aqlli assistant qurish",
+            "🎪 AI bilan kreativ yozish — hikoya, she'r, ssenariy yaratish mahorati",
+            "💼 AI bilan marketing — reklama matni va strategiya yaratish formulasi",
+            "🔮 AI kelajak bashorati — 2025-yilda qanday imkoniyatlar ochiladi?",
+            "🏆 AI olimpiada — kim eng zo'r prompt yoza oladi? Musobaqa boshlanadi!",
+            "🎭 AI roleplay — ChatGPT ni Elon Musk, Steve Jobs kabi qilish sirlari",
+            "📈 AI trading — kriptovalyuta va aksiyalarda AI yordamchisi"
         ]
         
         print("🤖 AI Post Bot Render.com Web Service da ishga tushdi. 07:00-21:00 UTC oralig'ida 20 ta post jo'natiladi.")
@@ -71,19 +75,37 @@ class AIPostBot:
     def generate_uzbek_text(self, topic):
         """Generate Uzbek text content about AI topics using Gemini 1.5 Flash"""
         try:
-            prompt = f"""O'zbek tilida, 400-600 so'z oralig'ida, o'qivchi uchun qiziqarli, batafsil, hayotiy misollar bilan, 
-AI ni o'rganish haqida to'liq ma'lumot ber. Mavzu: {topic}. 
+            prompt = f"""O'zbek tilida, 500-700 so'z oralig'ida, juda qiziqarli va amaliy post yoz. Mavzu: {topic}
+
+MUHIM TALABLAR:
+📝 MAZMUN:
+- Boshlash: qiziq fakt yoki hayratlanarli statiska bilan
+- Asosiy qism: aniq promptlar, misollar, bosqichma-bosqich yo'riqnoma
+- Tugash: savol bilan (engagement uchun)
+
+💡 PROMPT MISOLLARI:
+- Aniq, real ishlaydignan promptlarni berish
+- "Copy-paste" qilib foydalanish mumkin bo'lgan matnlar
+- Turli xil variantlar va alternativalar
+
+🎯 STIL:
+- Hayajonli va motivatsiyalovchi ohang
+- "Siz ham qila olasiz!" kayfiyati
+- Amaliy maslahatlar va life hack'lar
+- Konkret raqamlar va natijalar (masalan: "5 daqiqada", "10x tezroq")
+
+📊 STRUKTURA:
+1. Qiziq kirish (wow-fakt)
+2. Muammo/ehtiyoj (nima uchun kerak?)
+3. Yechim (qanday qilish?)
+4. Promptlar/misollar (copy-paste ready)
+5. Qo'shimcha maslahatlar
+6. Natija/foyda
+7. Savol (engagement)
+
 So'nggi qatorga: "➡️ {str(self.telegram_channel_id)} kanaliga obuna bo'ling!" yozing.
 
-Talablar:
-- Oddiy va tushunarli til
-- Batafsil tushuntirish va praktik maslahatlar
-- Ko'proq misollar va bosqichma-bosqich yo'riqnoma
-- Aniq natijaviy ma'lumotlar berish
-- Savol bilan tugashi (engagement uchun)
-- Professional va do'stona ohang
-- Matnni to'liq yozish, qisqartirmaslik
-Postda hashtag ishlatmang, faqat sof matn bo'lsin."""
+Hashtag ishlatmang, faqat sof matn va emoji'lar bilan yozing."""
             
             logger.info(f"Generating Uzbek text for topic: {topic}")
             response = self.text_model.generate_content(prompt)
@@ -153,74 +175,168 @@ Background should be clean and modern."""
             logger.error(f"Error generating topic image with Gemini 2.5 Flash Image Preview: {e}")
             return None
     
+    def generate_dynamic_image_prompt(self, topic):
+        """Generate dynamic and varied prompts for different topics"""
+        # Define topic categories and their visual elements
+        topic_visuals = {
+            'chatgpt': ['robot head', 'chat bubbles', 'brain neural networks', 'conversation interface'],
+            'prompt': ['lightbulb', 'command terminal', 'magic wand', 'speech bubble with code'],
+            'midjourney': ['artist palette', 'digital brush', 'creative scene', 'art studio'],
+            'rasm': ['camera', 'image gallery', 'creative tools', 'design studio'],
+            'python': ['snake logo', 'code blocks', 'programming setup', 'terminal window'],
+            'cv': ['document', 'professional profile', 'resume template', 'office desk'],
+            'video': ['film camera', 'video editing', 'movie clapper', 'screen recording'],
+            'matn': ['typewriter', 'documents', 'writing desk', 'keyboard'],
+            'o\'qish': ['books', 'education symbols', 'student desk', 'learning environment'],
+            'blog': ['laptop', 'writing', 'publish button', 'content creation'],
+            'xato': ['warning signs', 'debug symbols', 'error fixing', 'troubleshooting'],
+            'sarlavha': ['title design', 'headline text', 'newspaper', 'content header'],
+            'dastur': ['code editor', 'software development', 'programming languages', 'app interface'],
+            'tarjima': ['language symbols', 'translation interface', 'global communication', 'multilingual'],
+            'musiqa': ['musical notes', 'sound waves', 'audio studio', 'headphones'],
+            'o\'yin': ['game controller', 'pixel art', 'game development', 'gaming setup'],
+            'biznes': ['charts', 'business meeting', 'innovation', 'startup environment'],
+            'reja': ['calendar', 'planning board', 'schedule', 'time management'],
+            'o\'rganish': ['graduation cap', 'study materials', 'research', 'knowledge symbols']
+        }
+        
+        # Color schemes for variety
+        color_schemes = [
+            ['#667eea', '#764ba2'],  # Purple-blue
+            ['#f093fb', '#f5576c'],  # Pink-red
+            ['#4facfe', '#00f2fe'],  # Blue-cyan
+            ['#43e97b', '#38f9d7'],  # Green-teal
+            ['#fa709a', '#fee140'],  # Pink-yellow
+            ['#a8edea', '#fed6e3'],  # Mint-pink
+            ['#ff9a9e', '#fecfef'],  # Coral-pink
+            ['#a18cd1', '#fbc2eb']   # Purple-pink
+        ]
+        
+        # Find matching visual elements
+        visual_elements = ['technology symbols', 'modern interface', 'digital elements']
+        for key in topic_visuals:
+            if key in topic.lower():
+                visual_elements = topic_visuals[key]
+                break
+        
+        # Random selection for variety
+        import random
+        selected_elements = random.sample(visual_elements, min(2, len(visual_elements)))
+        selected_colors = random.choice(color_schemes)
+        
+        # Background styles
+        backgrounds = [
+            'clean gradient background',
+            'modern geometric background',
+            'abstract technological background',
+            'minimalist professional background',
+            'futuristic digital background'
+        ]
+        
+        selected_bg = random.choice(backgrounds)
+        
+        # Generate dynamic prompt
+        prompt = f"""Create a modern, professional illustration featuring {', '.join(selected_elements)}. 
+Style: clean, minimalist, suitable for social media and educational content.
+Colors: gradient from {selected_colors[0]} to {selected_colors[1]} with accent colors.
+Background: {selected_bg}
+NO TEXT, NO WORDS, NO LETTERS in the image - only visual symbols and elements.
+Composition: balanced, centered, with good contrast and visual hierarchy.
+16:9 aspect ratio, high quality, professional design."""
+        
+        return prompt
+
     def create_topic_graphic(self, topic):
-        """Create topic-related graphic using PIL when AI image generation fails"""
+        """Create varied topic-related graphics using PIL with dynamic content"""
         try:
+            import random
             width, height = 1000, 562  # 16:9 aspect ratio
-            img = Image.new('RGB', (width, height), color='#1a1a2e')
+            
+            # Generate varied color scheme
+            color_schemes = [
+                {'bg': ['#1a1a2e', '#16213e'], 'accent': ['#00ff88', '#ff6b6b', '#4ecdc4']},
+                {'bg': ['#2d1b69', '#11998e'], 'accent': ['#ffd93d', '#ff6b6b', '#6c5ce7']},
+                {'bg': ['#667eea', '#764ba2'], 'accent': ['#ffffff', '#f093fb', '#4facfe']},
+                {'bg': ['#f093fb', '#f5576c'], 'accent': ['#ffffff', '#43e97b', '#4facfe']},
+                {'bg': ['#4facfe', '#00f2fe'], 'accent': ['#ffffff', '#43e97b', '#ff6b6b']}
+            ]
+            
+            scheme = random.choice(color_schemes)
+            img = Image.new('RGB', (width, height), color=scheme['bg'][0])
             draw = ImageDraw.Draw(img)
             
-            # Create modern gradient background
-            for y in range(height):
-                # Modern blue gradient
-                blue_r = int(26 + (64 - 26) * (y / height))
-                blue_g = int(26 + (128 - 26) * (y / height))  
-                blue_b = int(46 + (200 - 46) * (y / height))
-                color = (blue_r, blue_g, blue_b)
-                draw.line([(0, y), (width, y)], fill=color)
+            # Create varied gradient background
+            bg_start = scheme['bg'][0].lstrip('#')
+            bg_end = scheme['bg'][1].lstrip('#')
             
-            # Draw topic-related geometric shapes and symbols
+            start_rgb = tuple(int(bg_start[i:i+2], 16) for i in (0, 2, 4))
+            end_rgb = tuple(int(bg_end[i:i+2], 16) for i in (0, 2, 4))
+            
+            for y in range(height):
+                ratio = y / height
+                r = int(start_rgb[0] + (end_rgb[0] - start_rgb[0]) * ratio)
+                g = int(start_rgb[1] + (end_rgb[1] - start_rgb[1]) * ratio)
+                b = int(start_rgb[2] + (end_rgb[2] - start_rgb[2]) * ratio)
+                draw.line([(0, y), (width, y)], fill=(r, g, b))
+            
+            # Determine topic-specific elements
             center_x, center_y = width // 2, height // 2
             
-            # Draw AI-related geometric patterns
-            # Circuit-like lines
-            draw.line([(100, 100), (300, 100)], fill='#00ff88', width=3)
-            draw.line([(300, 100), (350, 150)], fill='#00ff88', width=3)
-            draw.line([(700, 200), (900, 200)], fill='#ff6b6b', width=3)
-            draw.line([(900, 200), (850, 250)], fill='#ff6b6b', width=3)
+            # Draw topic-specific patterns
+            if 'chatgpt' in topic.lower() or 'prompt' in topic.lower():
+                # Chat/conversation elements
+                for i, (x, y) in enumerate([(200, 150), (600, 200), (400, 300)]):
+                    color = scheme['accent'][i % len(scheme['accent'])]
+                    # Chat bubble shapes
+                    draw.ellipse([x-30, y-20, x+30, y+20], outline=color, width=3)
+                    draw.polygon([(x-35, y), (x-25, y+10), (x-25, y-10)], fill=color)
+                    
+            elif 'rasm' in topic.lower() or 'midjourney' in topic.lower():
+                # Creative/artistic elements
+                for i in range(6):
+                    x = random.randint(100, width-100)
+                    y = random.randint(100, height-100)
+                    color = random.choice(scheme['accent'])
+                    size = random.randint(15, 40)
+                    # Artistic shapes
+                    if i % 3 == 0:
+                        draw.ellipse([x-size, y-size, x+size, y+size], outline=color, width=2)
+                    elif i % 3 == 1:
+                        draw.rectangle((x-size, y-size, x+size, y+size), outline=color, width=2)
+                    else:
+                        points = [(x, y-size), (x+size, y+size), (x-size, y+size)]
+                        draw.polygon(points, outline=color, width=2)
+                        
+            elif 'python' in topic.lower() or 'dastur' in topic.lower():
+                # Programming elements
+                for i in range(8):
+                    x = 150 + (i % 4) * 200
+                    y = 150 + (i // 4) * 200
+                    color = scheme['accent'][i % len(scheme['accent'])]
+                    # Code block representations
+                    draw.rectangle((x-40, y-15, x+40, y+15), outline=color, width=2)
+                    for j in range(3):
+                        draw.line([x-35+j*20, y-10+j*7, x-15+j*20, y-10+j*7], fill=color, width=1)
+                        
+            else:
+                # General AI/tech elements
+                positions = [(200, 180), (500, 150), (800, 200), (300, 350), (700, 380)]
+                for i, (x, y) in enumerate(positions):
+                    color = scheme['accent'][i % len(scheme['accent'])]
+                    # Neural network nodes
+                    draw.ellipse([x-20, y-20, x+20, y+20], fill=color)
+                    # Connecting lines
+                    if i < len(positions) - 1:
+                        next_x, next_y = positions[i+1]
+                        draw.line([x, y, next_x, next_y], fill=color, width=2)
             
-            # Draw neural network nodes
-            for i, (x, y) in enumerate([(200, 150), (400, 180), (600, 120), (800, 160)]):
-                color = ['#00ff88', '#ff6b6b', '#4ecdc4', '#45b7d1'][i % 4]
-                draw.ellipse([x-15, y-15, x+15, y+15], fill=color)
-            
-            # Draw brain-like pattern in center
-            brain_x, brain_y = center_x - 50, center_y - 30
-            for i in range(5):
-                x_offset = i * 25
-                draw.ellipse([brain_x + x_offset - 10, brain_y - 10, 
-                             brain_x + x_offset + 10, brain_y + 10], 
-                            outline='#ffd93d', width=2)
-            
-            # Add technology symbols
-            # Gear-like circles
-            for x, y in [(150, 300), (850, 350)]:
-                for radius in [20, 15, 10]:
-                    draw.ellipse([x-radius, y-radius, x+radius, y+radius], 
-                               outline='#6c5ce7', width=2)
-            
-            # Draw binary pattern (decorative)
-            binary_color = '#a8e6cf'
-            for i in range(0, width, 50):
-                for j in range(0, height, 80):
-                    if (i + j) % 100 == 0:
-                        draw.ellipse([i-3, j-3, i+3, j+3], fill=binary_color)
-            
-            # Add AI-themed icons as simple shapes
-            # Robot head outline
-            robot_x, robot_y = center_x + 100, center_y + 50
-            draw.rectangle((robot_x-20, robot_y-20, robot_x+20, robot_y+20), 
-                          outline='#fd79a8', width=3)
-            draw.ellipse([robot_x-15, robot_y-10, robot_x-5, robot_y], fill='#fd79a8')
-            draw.ellipse([robot_x+5, robot_y-10, robot_x+15, robot_y], fill='#fd79a8')
-            
-            # CPU/chip pattern
-            chip_x, chip_y = center_x - 100, center_y + 80
-            draw.rectangle((chip_x-25, chip_y-15, chip_x+25, chip_y+15), 
-                          outline='#00b894', width=2)
-            for i in range(-20, 25, 10):
-                draw.line([chip_x+i, chip_y-15, chip_x+i, chip_y+15], 
-                         fill='#00b894', width=1)
+            # Add random decorative elements
+            for _ in range(random.randint(10, 20)):
+                x = random.randint(50, width-50)
+                y = random.randint(50, height-50)
+                color = random.choice(scheme['accent'])
+                size = random.randint(2, 8)
+                draw.ellipse([x-size, y-size, x+size, y+size], fill=color)
             
             # Save to BytesIO
             img_buffer = BytesIO()
