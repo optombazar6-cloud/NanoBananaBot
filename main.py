@@ -192,7 +192,7 @@ SynthID watermark is allowed but must be subtle and in bottom-right corner."""
             draw.text((title_x, 30), title, fill='#FFD700', font=font_title)
             
             # Process and wrap text more efficiently
-            clean_text = text.replace('➡️ ' + self.telegram_channel_id + ' kanaliga obuna bo\'ling!', '').strip()
+            clean_text = text.replace('➡️ ' + str(self.telegram_channel_id) + ' kanaliga obuna bo\'ling!', '').strip()
             words = clean_text.split()
             lines = []
             current_line = ""
@@ -393,8 +393,8 @@ def main():
         scheduler_thread = threading.Thread(target=bot.run_scheduler, daemon=True)
         scheduler_thread.start()
         
-        # Get port from environment (Render.com sets PORT, default to 8000 for Replit)
-        port = int(os.getenv('PORT', 8000))  # Replit doesn't support 10000
+        # Get port from environment (default to 5000 for Replit)
+        port = int(os.getenv('PORT', 5000))  # Use port 5000 for Replit frontend
         
         # Start Flask web server
         logger.info(f"🌐 Starting Flask web server on 0.0.0.0:{port}")
