@@ -149,42 +149,58 @@ SynthID watermark is allowed but must be subtle and in bottom-right corner."""
             return None
     
     def create_fallback_image(self, text):
-        """Create fallback image with text using PIL when nano banana image generation fails"""
+        """Create improved fallback image with complete text using PIL when nano banana image generation fails"""
         try:
-            width, height = 800, 600  # 4:3 aspect ratio for readability
-            img = Image.new('RGB', (width, height), color='#1a1a2e')
+            width, height = 1000, 1400  # Vertical format for better text readability
+            img = Image.new('RGB', (width, height), color='#0f0f23')
             draw = ImageDraw.Draw(img)
             
-            # Create gradient background
+            # Create nano banana cosmic gradient background
             for y in range(height):
-                gradient_color = int(26 + (64 - 26) * (y / height))
-                color = (gradient_color, gradient_color, 100 + int(55 * (y / height)))
+                # Purple to cyan gradient like in nano banana theme
+                purple_r = int(15 + (138 - 15) * (y / height))
+                purple_g = int(15 + (43 - 15) * (y / height))  
+                purple_b = int(35 + (226 - 35) * (y / height))
+                color = (purple_r, purple_g, purple_b)
                 draw.line([(0, y), (width, y)], fill=color)
             
-            # Try to use system font
+            # Try to use system font with better sizes
             try:
-                font_large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 36)
-                font_medium = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 24)
+                font_title = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 32)
+                font_text = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 18)
+                font_emoji = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 24)
             except:
-                font_large = ImageFont.load_default()
-                font_medium = ImageFont.load_default()
+                font_title = ImageFont.load_default()
+                font_text = ImageFont.load_default()
+                font_emoji = ImageFont.load_default()
             
-            # Add title
-            title = "AI Post - Nano Banana Channel"
-            title_bbox = draw.textbbox((0, 0), title, font=font_large)
+            # Add nano banana title with glow effect
+            title = "🍌 NANO BANANA AI CHANNEL"
+            title_bbox = draw.textbbox((0, 0), title, font=font_title)
             title_width = title_bbox[2] - title_bbox[0]
             title_x = (width - title_width) // 2
-            draw.text((title_x, 40), title, fill='#ffd700', font=font_large)
             
-            # Add main text (word wrap)
-            words = text.split()
+            # Add glow effect
+            for offset in range(3, 0, -1):
+                alpha = 100 - (offset * 20)
+                glow_color = (255, 215, 0)  # Golden glow
+                for dx in [-offset, 0, offset]:
+                    for dy in [-offset, 0, offset]:
+                        if dx != 0 or dy != 0:
+                            draw.text((title_x + dx, 30 + dy), title, fill=glow_color, font=font_title)
+            
+            draw.text((title_x, 30), title, fill='#FFD700', font=font_title)
+            
+            # Process and wrap text more efficiently
+            clean_text = text.replace('➡️ ' + self.telegram_channel_id + ' kanaliga obuna bo\'ling!', '').strip()
+            words = clean_text.split()
             lines = []
             current_line = ""
-            max_width = width - 80
+            max_width = width - 60  # More padding
             
             for word in words:
                 test_line = current_line + " " + word if current_line else word
-                test_bbox = draw.textbbox((0, 0), test_line, font=font_medium)
+                test_bbox = draw.textbbox((0, 0), test_line, font=font_text)
                 test_width = test_bbox[2] - test_bbox[0]
                 
                 if test_width <= max_width:
@@ -197,27 +213,37 @@ SynthID watermark is allowed but must be subtle and in bottom-right corner."""
             if current_line:
                 lines.append(current_line)
             
-            # Limit to max 18 lines for readability
-            if len(lines) > 18:
-                lines = lines[:17]
-                lines.append("...")
+            # Draw text lines with better spacing
+            y_offset = 90
+            line_height = 26
             
-            # Draw text lines
-            y_offset = 120
-            line_height = 32
             for line in lines:
-                line_bbox = draw.textbbox((0, 0), line, font=font_medium)
+                if y_offset + line_height > height - 150:  # Stop if we're getting too close to bottom
+                    break
+                    
+                # Center align text
+                line_bbox = draw.textbbox((0, 0), line, font=font_text)
                 line_width = line_bbox[2] - line_bbox[0]
-                x = (width - line_width) // 2
-                draw.text((x, y_offset), line, fill='#ffffff', font=font_medium)
+                x = max(30, (width - line_width) // 2)  # Center but not less than 30px margin
+                
+                # Add subtle text shadow
+                draw.text((x + 1, y_offset + 1), line, fill='#000020', font=font_text)
+                draw.text((x, y_offset), line, fill='#FFFFFF', font=font_text)
                 y_offset += line_height
             
-            # Add nano banana emoji representation
-            nano_banana_text = "🍌⚡🤖 Nano Banana AI"
-            banana_bbox = draw.textbbox((0, 0), nano_banana_text, font=font_large)
-            banana_width = banana_bbox[2] - banana_bbox[0]
-            banana_x = (width - banana_width) // 2
-            draw.text((banana_x, height - 80), nano_banana_text, fill='#ffd700', font=font_large)
+            # Add nano banana footer with channel info
+            footer_text = "🤖 AI o'rganish - Nano Banana metaforasi bilan"
+            footer_bbox = draw.textbbox((0, 0), footer_text, font=font_emoji)
+            footer_width = footer_bbox[2] - footer_bbox[0]
+            footer_x = (width - footer_width) // 2
+            draw.text((footer_x, height - 100), footer_text, fill='#FFD700', font=font_emoji)
+            
+            # Add subscription call to action
+            cta_text = f"➡️ {self.telegram_channel_id} kanaliga obuna bo'ling!"
+            cta_bbox = draw.textbbox((0, 0), cta_text, font=font_emoji)
+            cta_width = cta_bbox[2] - cta_bbox[0]
+            cta_x = (width - cta_width) // 2
+            draw.text((cta_x, height - 60), cta_text, fill='#00FFFF', font=font_emoji)
             
             # Save to BytesIO
             img_buffer = BytesIO()
@@ -227,7 +253,7 @@ SynthID watermark is allowed but must be subtle and in bottom-right corner."""
             return img_buffer
             
         except Exception as e:
-            logger.error(f"Error creating fallback image: {e}")
+            logger.error(f"Error creating improved fallback image: {e}")
             return None
     
     def post_to_telegram(self, text, image_buffer):
@@ -296,7 +322,7 @@ SynthID watermark is allowed but must be subtle and in bottom-right corner."""
             # If nano banana image generation failed, create PIL fallback
             if not image_buffer:
                 logger.info("Nano banana image generation failed, creating PIL fallback image")
-                image_buffer = self.create_fallback_image(text_content[:200] + "...")
+                image_buffer = self.create_fallback_image(text_content)
             
             # Post to Telegram
             success = self.post_to_telegram(text_content, image_buffer)
