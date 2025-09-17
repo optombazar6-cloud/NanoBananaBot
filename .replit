@@ -22,21 +22,22 @@ args = "AI Bot"
 name = "AI Bot"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python main.py"
-
-[workflows.workflow.metadata]
-outputType = "console"
+waitForPort = 5000
 
 [[ports]]
 localPort = 5000
-externalPort = 5000
-
-[[ports]]
-localPort = 10000
 externalPort = 80
 
 [[ports]]
 localPort = 37027
 externalPort = 3000
+
+[[ports]]
+localPort = 46013
+externalPort = 3001
