@@ -111,22 +111,25 @@ Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?
 
 ➡️ {self.telegram_channel_id} kanaliga obuna bo'ling!"""
     
-    def generate_nano_banana_image(self, topic):
-        """Generate image using Gemini 2.5 Flash Image Preview with nano banana metaphor"""
+    def generate_topic_image(self, topic):
+        """Generate topic-related image using Gemini 2.5 Flash Image Preview (no text in image)"""
         try:
-            logger.info(f"Generating nano banana image with Gemini 2.5 Flash Image Preview for topic: {topic}")
+            logger.info(f"Generating topic-related image with Gemini 2.5 Flash Image Preview for topic: {topic}")
             
             image_model = genai.GenerativeModel('gemini-2.5-flash-image-preview')
             
-            # Nano banana prompt with specific metaphor as requested
-            prompt = f"""Create a high-quality, educational infographic-style image about: '{topic}'. 
-Visualize the concept using creative metaphors. Include a small, glowing nano-banana 
-(1cm size, made of golden circuit boards and neon-blue wires, smiling, floating in zero gravity) 
-as the central symbol of AI intelligence. Surround it with icons: brain, robot, code brackets, 
-speech bubble with 'Prompt', lightbulb, gears. Background: soft gradient purple-cyan cosmic space. 
-Style: futuristic educational poster for teenagers, clean vector art, professional design, 
-no text overlay, 16:9 aspect ratio, ultra-detailed, cinematic lighting. 
-SynthID watermark is allowed but must be subtle and in bottom-right corner."""
+            # Generate image related to the topic without any text
+            prompt = f"""Create a high-quality, professional image related to: '{topic}'. 
+Show relevant objects, scenes, technology, or illustrations that represent this AI topic.
+Style: modern, clean, professional, educational, suitable for social media.
+NO TEXT, NO WORDS, NO LETTERS in the image - only visual elements.
+16:9 aspect ratio, high detail, good lighting, colorful and engaging.
+Examples of what to show:
+- For ChatGPT/AI models: robot, computer brain, neural networks
+- For image generation: artist tools, creative scenes, digital art
+- For programming: code symbols, computers, development setup
+- For learning AI: books, brain, lightbulb, education symbols
+Background should be clean and modern."""
             
             response = image_model.generate_content(prompt)
             
@@ -140,112 +143,84 @@ SynthID watermark is allowed but must be subtle and in bottom-right corner."""
                             image_data = image_data_b64
                         
                         if len(image_data) > 0:
-                            logger.info(f"Successfully generated nano banana image: {len(image_data)} bytes")
+                            logger.info(f"Successfully generated topic image: {len(image_data)} bytes")
                             return BytesIO(image_data)
             
             logger.warning("No valid image data found in Gemini 2.5 Flash Image Preview response")
             return None
             
         except Exception as e:
-            logger.error(f"Error generating nano banana image with Gemini 2.5 Flash Image Preview: {e}")
+            logger.error(f"Error generating topic image with Gemini 2.5 Flash Image Preview: {e}")
             return None
     
-    def create_fallback_image(self, text):
-        """Create improved fallback image with complete text using PIL when nano banana image generation fails"""
+    def create_topic_graphic(self, topic):
+        """Create topic-related graphic using PIL when AI image generation fails"""
         try:
-            width, height = 1000, 1400  # Vertical format for better text readability
-            img = Image.new('RGB', (width, height), color='#0f0f23')
+            width, height = 1000, 562  # 16:9 aspect ratio
+            img = Image.new('RGB', (width, height), color='#1a1a2e')
             draw = ImageDraw.Draw(img)
             
-            # Create nano banana cosmic gradient background
+            # Create modern gradient background
             for y in range(height):
-                # Purple to cyan gradient like in nano banana theme
-                purple_r = int(15 + (138 - 15) * (y / height))
-                purple_g = int(15 + (43 - 15) * (y / height))  
-                purple_b = int(35 + (226 - 35) * (y / height))
-                color = (purple_r, purple_g, purple_b)
+                # Modern blue gradient
+                blue_r = int(26 + (64 - 26) * (y / height))
+                blue_g = int(26 + (128 - 26) * (y / height))  
+                blue_b = int(46 + (200 - 46) * (y / height))
+                color = (blue_r, blue_g, blue_b)
                 draw.line([(0, y), (width, y)], fill=color)
             
-            # Try to use system font with better sizes
-            try:
-                font_title = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 32)
-                font_text = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 18)
-                font_emoji = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 24)
-            except:
-                font_title = ImageFont.load_default()
-                font_text = ImageFont.load_default()
-                font_emoji = ImageFont.load_default()
+            # Draw topic-related geometric shapes and symbols
+            center_x, center_y = width // 2, height // 2
             
-            # Add nano banana title with glow effect
-            title = "🍌 NANO BANANA AI CHANNEL"
-            title_bbox = draw.textbbox((0, 0), title, font=font_title)
-            title_width = title_bbox[2] - title_bbox[0]
-            title_x = (width - title_width) // 2
+            # Draw AI-related geometric patterns
+            # Circuit-like lines
+            draw.line([(100, 100), (300, 100)], fill='#00ff88', width=3)
+            draw.line([(300, 100), (350, 150)], fill='#00ff88', width=3)
+            draw.line([(700, 200), (900, 200)], fill='#ff6b6b', width=3)
+            draw.line([(900, 200), (850, 250)], fill='#ff6b6b', width=3)
             
-            # Add glow effect
-            for offset in range(3, 0, -1):
-                alpha = 100 - (offset * 20)
-                glow_color = (255, 215, 0)  # Golden glow
-                for dx in [-offset, 0, offset]:
-                    for dy in [-offset, 0, offset]:
-                        if dx != 0 or dy != 0:
-                            draw.text((title_x + dx, 30 + dy), title, fill=glow_color, font=font_title)
+            # Draw neural network nodes
+            for i, (x, y) in enumerate([(200, 150), (400, 180), (600, 120), (800, 160)]):
+                color = ['#00ff88', '#ff6b6b', '#4ecdc4', '#45b7d1'][i % 4]
+                draw.ellipse([x-15, y-15, x+15, y+15], fill=color)
             
-            draw.text((title_x, 30), title, fill='#FFD700', font=font_title)
+            # Draw brain-like pattern in center
+            brain_x, brain_y = center_x - 50, center_y - 30
+            for i in range(5):
+                x_offset = i * 25
+                draw.ellipse([brain_x + x_offset - 10, brain_y - 10, 
+                             brain_x + x_offset + 10, brain_y + 10], 
+                            outline='#ffd93d', width=2)
             
-            # Process and wrap text more efficiently
-            clean_text = text.replace('➡️ ' + str(self.telegram_channel_id) + ' kanaliga obuna bo\'ling!', '').strip()
-            words = clean_text.split()
-            lines = []
-            current_line = ""
-            max_width = width - 60  # More padding
+            # Add technology symbols
+            # Gear-like circles
+            for x, y in [(150, 300), (850, 350)]:
+                for radius in [20, 15, 10]:
+                    draw.ellipse([x-radius, y-radius, x+radius, y+radius], 
+                               outline='#6c5ce7', width=2)
             
-            for word in words:
-                test_line = current_line + " " + word if current_line else word
-                test_bbox = draw.textbbox((0, 0), test_line, font=font_text)
-                test_width = test_bbox[2] - test_bbox[0]
-                
-                if test_width <= max_width:
-                    current_line = test_line
-                else:
-                    if current_line:
-                        lines.append(current_line)
-                    current_line = word
+            # Draw binary pattern (decorative)
+            binary_color = '#a8e6cf'
+            for i in range(0, width, 50):
+                for j in range(0, height, 80):
+                    if (i + j) % 100 == 0:
+                        draw.ellipse([i-3, j-3, i+3, j+3], fill=binary_color)
             
-            if current_line:
-                lines.append(current_line)
+            # Add AI-themed icons as simple shapes
+            # Robot head outline
+            robot_x, robot_y = center_x + 100, center_y + 50
+            draw.rectangle((robot_x-20, robot_y-20, robot_x+20, robot_y+20), 
+                          outline='#fd79a8', width=3)
+            draw.ellipse([robot_x-15, robot_y-10, robot_x-5, robot_y], fill='#fd79a8')
+            draw.ellipse([robot_x+5, robot_y-10, robot_x+15, robot_y], fill='#fd79a8')
             
-            # Draw text lines with better spacing
-            y_offset = 90
-            line_height = 26
-            
-            for line in lines:
-                if y_offset + line_height > height - 150:  # Stop if we're getting too close to bottom
-                    break
-                    
-                # Center align text
-                line_bbox = draw.textbbox((0, 0), line, font=font_text)
-                line_width = line_bbox[2] - line_bbox[0]
-                x = max(30, (width - line_width) // 2)  # Center but not less than 30px margin
-                
-                # Add subtle text shadow
-                draw.text((x + 1, y_offset + 1), line, fill='#000020', font=font_text)
-                draw.text((x, y_offset), line, fill='#FFFFFF', font=font_text)
-                y_offset += line_height
-            
-            # Add nano banana footer with channel info
-            footer_text = "🤖 AI o'rganish - Nano Banana metaforasi bilan"
-            footer_bbox = draw.textbbox((0, 0), footer_text, font=font_emoji)
-            footer_width = footer_bbox[2] - footer_bbox[0]
-            footer_x = (width - footer_width) // 2
-            draw.text((footer_x, height - 100), footer_text, fill='#FFD700', font=font_emoji)
-            
-            # Add subscription call to action
-            cta_text = f"➡️ {self.telegram_channel_id} kanaliga obuna bo'ling!"
-            cta_bbox = draw.textbbox((0, 0), cta_text, font=font_emoji)
-            cta_width = cta_bbox[2] - cta_bbox[0]
-            cta_x = (width - cta_width) // 2
-            draw.text((cta_x, height - 60), cta_text, fill='#00FFFF', font=font_emoji)
+            # CPU/chip pattern
+            chip_x, chip_y = center_x - 100, center_y + 80
+            draw.rectangle((chip_x-25, chip_y-15, chip_x+25, chip_y+15), 
+                          outline='#00b894', width=2)
+            for i in range(-20, 25, 10):
+                draw.line([chip_x+i, chip_y-15, chip_x+i, chip_y+15], 
+                         fill='#00b894', width=1)
             
             # Save to BytesIO
             img_buffer = BytesIO()
@@ -255,7 +230,7 @@ SynthID watermark is allowed but must be subtle and in bottom-right corner."""
             return img_buffer
             
         except Exception as e:
-            logger.error(f"Error creating improved fallback image: {e}")
+            logger.error(f"Error creating topic graphic: {e}")
             return None
     
     def post_to_telegram(self, text, image_buffer):
@@ -309,22 +284,30 @@ SynthID watermark is allowed but must be subtle and in bottom-right corner."""
             return False
     
     def create_and_post_ai_post(self):
-        """Generate detailed AI post and send as text-only to Telegram"""
+        """Generate AI post with topic-related image (no text in image) and detailed text"""
         try:
             # Select random topic
             topic = random.choice(self.ai_topics)
-            logger.info(f"Creating detailed AI text post for topic: {topic}")
+            logger.info(f"Creating AI post with image for topic: {topic}")
             
             # Generate detailed Uzbek text content
             text_content = self.generate_uzbek_text(topic)
             
-            # Post to Telegram as text-only message (no images)
-            success = self.post_to_telegram(text_content, None)
+            # Try to generate topic-related image (without text)
+            image_buffer = self.generate_topic_image(topic)
+            
+            # If AI image generation failed, create topic-related graphic fallback
+            if not image_buffer:
+                logger.info("AI image generation failed, creating topic-related graphic fallback")
+                image_buffer = self.create_topic_graphic(topic)
+            
+            # Post to Telegram with image and text caption
+            success = self.post_to_telegram(text_content, image_buffer)
             
             if success:
-                logger.info("✅ Detailed AI text post published successfully")
+                logger.info("✅ AI post with image and text published successfully")
             else:
-                logger.error("❌ Failed to publish AI text post")
+                logger.error("❌ Failed to publish AI post")
                 
         except Exception as e:
             logger.error(f"Error in create_and_post_ai_post: {e}")
