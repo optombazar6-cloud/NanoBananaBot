@@ -359,6 +359,16 @@ def health():
     """Health check endpoint"""
     return {"status": "healthy"}
 
+@app.route('/test_post')
+def test_post():
+    """Test endpoint to manually trigger a post"""
+    try:
+        bot = AIPostBot()
+        bot.create_and_post_ai_post()
+        return {"status": "Test post sent successfully"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 def main():
     """Main entry point"""
     try:
