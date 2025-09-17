@@ -1,0 +1,38 @@
+I need you to rewrite the entire AI-generated Instagram/TG post bot code for production deployment on Render.com. This is not a prototype — it must be clean, scalable, and follow Render.com’s best practices.
+
+✅ Requirements:
+- Use Python 3.10+
+- Use ONLY standard libraries and pip-installable packages: google-generativeai, python-telegram-bot, Pillow, schedule
+- Do NOT use Replit-specific features (like "Always On", .replit, or environment variables via UI only)
+- All secrets (Google API key, Telegram token) MUST be loaded from environment variables using os.getenv()
+- Use proper error handling and logging (print statements are OK for now, but no excessive debug spam)
+- The bot generates 20 posts daily between 07:00 and 21:00 UTC (every 42 minutes)
+- Each post contains:
+   1. A text message in Uzbek (200–300 words) about AI learning, prompts, or AI tools (e.g., “ChatGPT vs Gemini”, “How to write AI prompts?”)
+   2. A generated image using Google Gemini 2.5 Flash Image Preview model with a creative “nano banana” metaphor (tiny glowing banana with circuit patterns, floating in space, symbolizing AI power). NO TEXT ON IMAGE.
+- Use the exact model names: 
+   - Text: gemini-1.5-flash-latest
+   - Image: gemini-2.5-flash-image-preview
+- If image generation fails (due to API limits or preview mode), FALL BACK to generating a clean PNG image with the text content rendered as an image (using PIL), with professional typography and background.
+- The script runs indefinitely using schedule.every().day.at() — no external cron needed.
+- Output must be a SINGLE FILE: main.py
+- Add a README.md file explaining how to deploy on Render.com:
+   - Set environment variables: GOOGLE_API_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CHANNEL_ID
+   - Use “Web Service” type on Render
+   - Build command: leave empty
+   - Start command: python main.py
+   - Runtime: Python 3.10
+- DO NOT include any comments like “TODO” or “FIXME”. Code must be production-ready.
+- Include proper try/except blocks around all API calls.
+- Add a startup log: “🤖 AI Post Bot started on Render.com. Generating 20 posts daily from 07:00 to 21:00 UTC.”
+- Ensure the image generation prompt for “nano banana” is rich, detailed, and optimized for Gemini 2.5 Flash Image:
+   “Create a high-quality, educational infographic-style image about: '[TOPIC]'. Visualize the concept using creative metaphors. Include a small, glowing nano-banana (1cm size, made of golden circuit boards and neon-blue wires, smiling, floating in zero gravity) as the central symbol of AI intelligence. Surround it with icons: brain, robot, code brackets, speech bubble with 'Prompt', lightbulb, gears. Background: soft gradient purple-cyan cosmic space. Style: futuristic educational poster for teenagers. Ultra-detailed, 8K resolution, cinematic lighting. No text on image. SynthID watermark is allowed but must be subtle and in bottom-right corner.”
+
+- Do NOT use base64 encoding for images. Use BytesIO and PIL directly.
+- Test the code locally before outputting — ensure it runs without errors.
+- Do not use async/await — keep it synchronous for simplicity on Render.
+
+Output format:
+First, output the full main.py file.
+Then, output the full README.md file.
+No other text. No explanations. Just the two files.
