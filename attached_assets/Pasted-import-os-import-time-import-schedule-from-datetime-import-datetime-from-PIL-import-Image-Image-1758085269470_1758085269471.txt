@@ -1,0 +1,166 @@
+import os
+import time
+import schedule
+from datetime import datetime
+from PIL import Image, ImageDraw, ImageFont
+from io import BytesIO
+import telebot
+import google.generativeai as genai
+from flask import Flask, jsonify
+
+# --- MAXFIY MA'LUMOTLARNI O'QISH ---
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID")
+
+if not all([GOOGLE_API_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CHANNEL_ID]):
+    raise EnvironmentError("Maxfiy kalitlar topilmadi: GOOGLE_API_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CHANNEL_ID")
+
+# --- MODEL NOMLARI ---
+TEXT_MODEL_NAME = "gemini-1.5-flash-latest"
+IMAGE_MODEL_NAME = "gemini-2.5-flash-image-preview"
+
+# --- TELEGRAM BOT ---
+bot = telebot.TeleBot(TELEGRAM_BOT_TOKEN)
+
+# --- GEMINI API SOZLASH ---
+genai.configure(api_key=GOOGLE_API_KEY)
+
+def generate_text(prompt):
+    try:
+        model = genai.GenerativeModel(TEXT_MODEL_NAME)
+        response = model.generate_content(prompt)
+        return response.text.strip()
+    except Exception as e:
+        print(f"❌ Matn generatsiyasi xato: {e}")
+        return "AI haqida ma'lumot olinmadi. Iltimos, keyinroq qaytadan ko'ring."
+
+def generate_image(prompt):
+    try:
+        model = genai.GenerativeModel(IMAGE_MODEL_NAME)
+        response = model.generate_content([prompt])
+        
+        for part in response.candidates[0].content.parts:
+            if hasattr(part, 'inline_data') and part.inline_
+                image_bytes = part.inline_data.data
+                image = Image.open(BytesIO(image_bytes))
+                buffer = BytesIO()
+                image.save(buffer, format="PNG")
+                buffer.seek(0)
+                return buffer
+    except Exception as e:
+        print(f"❌ Rasm generatsiyasi xato: {e}")
+    
+    return None
+
+def create_fallback_image(text_content):
+    img = Image.new('RGB', (800, 600), color=(240, 240, 255))
+    draw = ImageDraw.Draw(img)
+    
+    try:
+        font = ImageFont.truetype("arial.ttf", 20)
+    except IOError:
+        font = ImageFont.load_default()
+    
+    lines = text_content.split('\n')
+    y_offset = 40
+    for line in lines:
+        draw.text((50, y_offset), line, font=font, fill=(0, 0, 0))
+        y_offset += 28
+    
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+    return buffer
+
+def create_and_post_ai_post():
+    print(f"[{datetime.now()}] Post yaratilmoqda...")
+
+    topics = [
+        "Prompt engineering nima? AI ga qanday buyruq berish kerak?",
+        "ChatGPT va Gemini farqi nima? Qaysi biri yaxshi?",
+        "Midjourney qanday ishlaydi? Rasm generatsiyasi uchun eng yaxshi promptlar",
+        "AI bilan qanday dasturlash qilish mumkin? Python + AI misoli",
+        "AI qanday o'qiydi? Neuronlar nima?",
+        "Stable Diffusion vs DALL·E 3: qaysi rasm yaxshiroq?",
+        "AI bilan CV yozish — qanday prompt berish kerak?",
+        "AI yordamida video script yozish — qo'lda emas!",
+        "AI bilan o'zbek tilida matn yozish — qanday muvaffaqiyatli?",
+        "AI qanday o'qishni o'rgatadi? O'qituvchi o'rniga AI?",
+        "AI bilan blog yozish — 1 daqiqada 500 so'z!",
+        "AI qanday xatolar qiladi? Va ularni qanday tuzatish mumkin?",
+        "AI bilan rasmga sarlavha yozish — promptlar namunalari",
+        "AI bilan dastur yozish — kodni tushuntirish",
+        "AI bilan tarjima qilish — qanchalik aniqlik?",
+        "AI bilan musiqa yaratish — qanday?",
+        "AI bilan o'yin yaratish — qanday dasturlash kerak?",
+        "AI bilan biznes fikrlarini yaratish — 10 ta fikr!",
+        "AI bilan kunlik reja tuzish — qanday prompt berish kerak?",
+        "AI ni o'rganish — boshlang'ich darajada nimalar kerak?"
+    ]
+
+    topic = random.choice(topics)
+
+    # Matn generatsiyasi
+    text_prompt = f"""O'zbek tilida, 200-300 so'z oralig'ida, o'qivchi uchun qiziqarli, oddiy, hayotiy misollar bilan, 
+    AI ni o'rganish haqida ma'lumot ber. Mavzu: {topic}. 
+    So'ngi qatorga: "➡️ {TELEGRAM_CHANNEL_ID} kanaliga obuna bo'ling!" yozing."""
+    
+    text_content = generate_text(text_prompt)
+
+    # Rasm uchun prompt — nano banana strategiyasi
+    image_prompt = (
+        f"Create a high-quality, educational infographic-style image about: '{topic}'. "
+        f"Visualize the concept using creative metaphors. Include a small, glowing nano-banana "
+        f"(1cm size, made of golden circuit boards and neon-blue wires, smiling, floating in zero gravity) "
+        f"as the central symbol of AI intelligence. Surround it with icons: brain, robot, code brackets, "
+        f"speech bubble with 'Prompt', lightbulb, gears. Background: soft gradient purple-cyan cosmic space. "
+        f"Style: futuristic educational poster for teenagers. Ultra-detailed, 8K resolution, cinematic lighting. "
+        f"No text on image. SynthID watermark is allowed but must be subtle and in bottom-right corner."
+    )
+
+    image_buffer = generate_image(image_prompt)
+    
+    if image_buffer is None:
+        print("⚠️ Rasm generatsiya qilinmadi — matnli rasmga o'tish...")
+        image_buffer = create_fallback_image(text_content)
+
+    # Telegramga jo'natish
+    try:
+        bot.send_photo(
+            chat_id=TELEGRAM_CHANNEL_ID,
+            photo=image_buffer,
+            caption=text_content,
+            parse_mode='Markdown'
+        )
+        print(f"✅ Jo'natildi: {topic[:40]}...")
+    except Exception as e:
+        print(f"❌ Telegramga jo'natishda xato: {e}")
+
+# Har 42 daqiqada bir marta (07:00–21:00 UTC) — 20 ta post
+for i in range(20):
+    hour = 7 + (i * 42) // 60
+    minute = (i * 42) % 60
+    schedule.every().day.at(f"{hour:02d}:{minute:02d}").do(create_and_post_ai_post)
+
+# --- FLASK SERVERI UCHUN ENDPOINTLAR ---
+app = Flask(__name__)
+
+@app.route('/')
+def health_check():
+    return jsonify({"status": "alive"}), 200
+
+@app.route('/health')
+def health():
+    return jsonify({"status": "healthy"}), 200
+
+# --- DASTUR BOSHI ---
+print("🤖 AI Post Bot Render.com Web Service da ishga tushdi. 07:00-21:00 UTC oralig'ida 20 ta post jo'natiladi.")
+
+# Scheduler va serverni birga ishga tushiramiz
+if __name__ == "__main__":
+    # Scheduler ishga tushadi
+    print("✅ Scheduled 20 daily posts from 07:00 to 20:56 UTC")
+    
+    # Flask serverini ishga tushiramiz
+    app.run(host='0.0.0.0', port=10000, debug=False)

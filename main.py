@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 AI Post Bot for Telegram - Render.com Web Service
-Generates 20 daily posts with AI content and images using Google Gemini models
-Optimized for Render.com Web Service deployment
+Generates 20 daily posts with AI content and nano banana images using Google Gemini models
+Optimized for Render.com Web Service deployment with nano banana metaphor
 """
 
 import os
@@ -44,45 +44,44 @@ class AIPostBot:
         
         # AI topics in Uzbek
         self.ai_topics = [
-            "ChatGPT vs Gemini: qaysi biri yaxshiroq?",
-            "AI promptlarni qanday yozish kerak?",
-            "Midjourney bilan professional rasmlar yaratish",
-            "AI yordamida biznes g'oyalarini rivojlantirish",
-            "Copilot va dasturlash: kelajak bugun",
-            "AI detektorlar: qanday ishlaydi?",
-            "Stable Diffusion: bepul AI rasm generatori",
-            "AI chatbotlar: biznes uchun foydasi",
-            "OpenAI API bilan dastur yaratish",
-            "AI va ma'lumotlar xavfsizligi",
-            "AutoGPT va avtomatik vazifalar",
-            "AI bilan kontentni optimallashtirish",
-            "Hugging Face: AI modellar markazi",
-            "AI yordamida video montaj qilish",
-            "Bing AI va Google Bard taqqoslash",
-            "AI promptlarda rol-playing texnikasi",
-            "Notion AI: produktivlik uchun yordamchi",
-            "AI bilan SEO optimizatsiya qilish",
-            "Claude AI: Anthropic'ning yutug'i",
-            "AI tools for creative writing"
+            "Prompt engineering nima? AI ga qanday buyruq berish kerak?",
+            "ChatGPT va Gemini farqi nima? Qaysi biri yaxshi?",
+            "Midjourney qanday ishlaydi? Rasm generatsiyasi uchun eng yaxshi promptlar",
+            "AI bilan qanday dasturlash qilish mumkin? Python + AI misoli",
+            "AI qanday o'qiydi? Neuronlar nima?",
+            "Stable Diffusion vs DALL·E 3: qaysi rasm yaxshiroq?",
+            "AI bilan CV yozish — qanday prompt berish kerak?",
+            "AI yordamida video script yozish — qo'lda emas!",
+            "AI bilan o'zbek tilida matn yozish — qanday muvaffaqiyatli?",
+            "AI qanday o'qishni o'rgatadi? O'qituvchi o'rniga AI?",
+            "AI bilan blog yozish — 1 daqiqada 500 so'z!",
+            "AI qanday xatolar qiladi? Va ularni qanday tuzatish mumkin?",
+            "AI bilan rasmga sarlavha yozish — promptlar namunalari",
+            "AI bilan dastur yozish — kodni tushuntirish",
+            "AI bilan tarjima qilish — qanchalik aniqlik?",
+            "AI bilan musiqa yaratish — qanday?",
+            "AI bilan o'yin yaratish — qanday dasturlash kerak?",
+            "AI bilan biznes fikrlarini yaratish — 10 ta fikr!",
+            "AI bilan kunlik reja tuzish — qanday prompt berish kerak?",
+            "AI ni o'rganish — boshlang'ich darajada nimalar kerak?"
         ]
         
         print("🤖 AI Post Bot Render.com Web Service da ishga tushdi. 07:00-21:00 UTC oralig'ida 20 ta post jo'natiladi.")
     
     def generate_uzbek_text(self, topic):
-        """Generate Uzbek text content about AI topics using Gemini"""
+        """Generate Uzbek text content about AI topics using Gemini 1.5 Flash"""
         try:
-            prompt = f"""
-Mavzu: {topic}
+            prompt = f"""O'zbek tilida, 200-300 so'z oralig'ida, o'qivchi uchun qiziqarli, oddiy, hayotiy misollar bilan, 
+AI ni o'rganish haqida ma'lumot ber. Mavzu: {topic}. 
+So'nggi qatorga: "➡️ {self.telegram_channel_id} kanaliga obuna bo'ling!" yozing.
 
-O'zbek tilida AI va texnologiya haqida 200-300 so'zlik ma'lumotli va qiziqarli post yozing. Post quyidagi talablarga javob berishi kerak:
+Talablar:
 - Oddiy va tushunarli til
 - Praktik maslahatlar berish
 - Misollar keltirish
 - Savol bilan tugashi (engagement uchun)
 - Professional va do'stona ohang
-
-Postda hashtag ishlatmang, faqat sof matn bo'lsin.
-"""
+Postda hashtag ishlatmang, faqat sof matn bo'lsin."""
             
             logger.info(f"Generating Uzbek text for topic: {topic}")
             response = self.text_model.generate_content(prompt)
@@ -106,17 +105,26 @@ Bugungi kunda AI asboblari bizga vaqt tejash, samaradorlikni oshirish va yangi i
 
 Bu sohadagi yangiliklar va rivojlanishlar doimo kuzatib borish zarur. Professional rivojlanish uchun doimiy o'rganish va amaliyot qilish muhim.
 
-Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?"""
+Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?
+
+➡️ {self.telegram_channel_id} kanaliga obuna bo'ling!"""
     
-    def generate_image_with_gemini(self, topic):
-        """Generate image using Gemini 2.5 Flash Image"""
+    def generate_nano_banana_image(self, topic):
+        """Generate image using Gemini 2.5 Flash Image Preview with nano banana metaphor"""
         try:
-            logger.info(f"Generating image with Gemini 2.5 Flash Image for topic: {topic}")
+            logger.info(f"Generating nano banana image with Gemini 2.5 Flash Image Preview for topic: {topic}")
             
             image_model = genai.GenerativeModel('gemini-2.5-flash-image-preview')
+            
+            # Nano banana prompt with specific metaphor as requested
             prompt = f"""Create a high-quality, educational infographic-style image about: '{topic}'. 
-Professional design with AI technology elements, modern graphics, clean layout, 
-futuristic style, technology icons, AI symbols, 16:9 aspect ratio, no text overlay."""
+Visualize the concept using creative metaphors. Include a small, glowing nano-banana 
+(1cm size, made of golden circuit boards and neon-blue wires, smiling, floating in zero gravity) 
+as the central symbol of AI intelligence. Surround it with icons: brain, robot, code brackets, 
+speech bubble with 'Prompt', lightbulb, gears. Background: soft gradient purple-cyan cosmic space. 
+Style: futuristic educational poster for teenagers, clean vector art, professional design, 
+no text overlay, 16:9 aspect ratio, ultra-detailed, cinematic lighting. 
+SynthID watermark is allowed but must be subtle and in bottom-right corner."""
             
             response = image_model.generate_content(prompt)
             
@@ -130,20 +138,20 @@ futuristic style, technology icons, AI symbols, 16:9 aspect ratio, no text overl
                             image_data = image_data_b64
                         
                         if len(image_data) > 0:
-                            logger.info(f"Successfully generated image: {len(image_data)} bytes")
+                            logger.info(f"Successfully generated nano banana image: {len(image_data)} bytes")
                             return BytesIO(image_data)
             
-            logger.warning("No valid image data found in Gemini response")
+            logger.warning("No valid image data found in Gemini 2.5 Flash Image Preview response")
             return None
             
         except Exception as e:
-            logger.error(f"Error generating image with Gemini: {e}")
+            logger.error(f"Error generating nano banana image with Gemini 2.5 Flash Image Preview: {e}")
             return None
     
     def create_fallback_image(self, text):
-        """Create fallback image with text using PIL"""
+        """Create fallback image with text using PIL when nano banana image generation fails"""
         try:
-            width, height = 1200, 675  # 16:9 aspect ratio
+            width, height = 800, 600  # 4:3 aspect ratio for readability
             img = Image.new('RGB', (width, height), color='#1a1a2e')
             draw = ImageDraw.Draw(img)
             
@@ -155,24 +163,24 @@ futuristic style, technology icons, AI symbols, 16:9 aspect ratio, no text overl
             
             # Try to use system font
             try:
-                font_large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 48)
-                font_medium = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 32)
+                font_large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 36)
+                font_medium = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 24)
             except:
                 font_large = ImageFont.load_default()
                 font_medium = ImageFont.load_default()
             
             # Add title
-            title = "AI Post - Uzbek AI Channel"
+            title = "AI Post - Nano Banana Channel"
             title_bbox = draw.textbbox((0, 0), title, font=font_large)
             title_width = title_bbox[2] - title_bbox[0]
             title_x = (width - title_width) // 2
-            draw.text((title_x, 50), title, fill='#ffd700', font=font_large)
+            draw.text((title_x, 40), title, fill='#ffd700', font=font_large)
             
             # Add main text (word wrap)
             words = text.split()
             lines = []
             current_line = ""
-            max_width = width - 100
+            max_width = width - 80
             
             for word in words:
                 test_line = current_line + " " + word if current_line else word
@@ -189,14 +197,14 @@ futuristic style, technology icons, AI symbols, 16:9 aspect ratio, no text overl
             if current_line:
                 lines.append(current_line)
             
-            # Limit to max 15 lines
-            if len(lines) > 15:
-                lines = lines[:14]
+            # Limit to max 18 lines for readability
+            if len(lines) > 18:
+                lines = lines[:17]
                 lines.append("...")
             
             # Draw text lines
-            y_offset = 150
-            line_height = 40
+            y_offset = 120
+            line_height = 32
             for line in lines:
                 line_bbox = draw.textbbox((0, 0), line, font=font_medium)
                 line_width = line_bbox[2] - line_bbox[0]
@@ -204,12 +212,12 @@ futuristic style, technology icons, AI symbols, 16:9 aspect ratio, no text overl
                 draw.text((x, y_offset), line, fill='#ffffff', font=font_medium)
                 y_offset += line_height
             
-            # Add AI emoji
-            ai_text = "🤖🧠💡"
-            ai_bbox = draw.textbbox((0, 0), ai_text, font=font_large)
-            ai_width = ai_bbox[2] - ai_bbox[0]
-            ai_x = (width - ai_width) // 2
-            draw.text((ai_x, height - 100), ai_text, fill='#ffd700', font=font_large)
+            # Add nano banana emoji representation
+            nano_banana_text = "🍌⚡🤖 Nano Banana AI"
+            banana_bbox = draw.textbbox((0, 0), nano_banana_text, font=font_large)
+            banana_width = banana_bbox[2] - banana_bbox[0]
+            banana_x = (width - banana_width) // 2
+            draw.text((banana_x, height - 80), nano_banana_text, fill='#ffd700', font=font_large)
             
             # Save to BytesIO
             img_buffer = BytesIO()
@@ -229,7 +237,7 @@ futuristic style, technology icons, AI symbols, 16:9 aspect ratio, no text overl
                 image_buffer.seek(0)
                 
                 # Send photo with caption
-                files = {'photo': ('image.png', image_buffer, 'image/png')}
+                files = {'photo': ('nano_banana_image.png', image_buffer, 'image/png')}
                 data = {
                     'chat_id': self.telegram_channel_id,
                     'caption': text[:1024]  # Telegram caption limit
@@ -243,7 +251,7 @@ futuristic style, technology icons, AI symbols, 16:9 aspect ratio, no text overl
                 )
                 
                 if response.status_code == 200:
-                    logger.info("Posted to Telegram with image")
+                    logger.info("Posted nano banana content to Telegram with image")
                     return True
                 else:
                     logger.error(f"Telegram API error: {response.status_code} - {response.text}")
@@ -272,34 +280,34 @@ futuristic style, technology icons, AI symbols, 16:9 aspect ratio, no text overl
             logger.error(f"Error posting to Telegram: {e}")
             return False
     
-    def generate_and_post(self):
-        """Generate content and post to Telegram"""
+    def create_and_post_ai_post(self):
+        """Generate nano banana AI post and send to Telegram"""
         try:
             # Select random topic
             topic = random.choice(self.ai_topics)
-            logger.info(f"Generating post for topic: {topic}")
+            logger.info(f"Creating nano banana AI post for topic: {topic}")
             
-            # Generate text content
+            # Generate Uzbek text content
             text_content = self.generate_uzbek_text(topic)
             
-            # Try to generate image with Gemini first
-            image_buffer = self.generate_image_with_gemini(topic)
+            # Try to generate nano banana image with Gemini 2.5 Flash Image Preview first
+            image_buffer = self.generate_nano_banana_image(topic)
             
-            # If Gemini image generation failed, create PIL fallback
+            # If nano banana image generation failed, create PIL fallback
             if not image_buffer:
-                logger.info("Gemini image generation failed, creating PIL fallback image")
+                logger.info("Nano banana image generation failed, creating PIL fallback image")
                 image_buffer = self.create_fallback_image(text_content[:200] + "...")
             
             # Post to Telegram
             success = self.post_to_telegram(text_content, image_buffer)
             
             if success:
-                logger.info("✅ Post generated and published successfully")
+                logger.info("✅ Nano banana AI post generated and published successfully")
             else:
-                logger.error("❌ Failed to publish post")
+                logger.error("❌ Failed to publish nano banana AI post")
                 
         except Exception as e:
-            logger.error(f"Error in generate_and_post: {e}")
+            logger.error(f"Error in create_and_post_ai_post: {e}")
     
     def setup_schedule(self):
         """Setup posting schedule - 20 posts from 07:00 to 21:00 UTC (every ~42 minutes)"""
@@ -307,9 +315,9 @@ futuristic style, technology icons, AI symbols, 16:9 aspect ratio, no text overl
         start_hour = 7
         end_hour = 21
         
-        # Calculate 20 post times evenly distributed
+        # Calculate 20 post times evenly distributed across 14 hours
         total_minutes = (end_hour - start_hour) * 60  # 14 hours = 840 minutes
-        interval = total_minutes // 19  # 19 intervals for 20 posts
+        interval = total_minutes // 19  # 19 intervals for 20 posts (42 minutes approximately)
         
         for i in range(20):
             minutes_from_start = i * interval
@@ -319,19 +327,20 @@ futuristic style, technology icons, AI symbols, 16:9 aspect ratio, no text overl
             time_str = f"{hour:02d}:{minute:02d}"
             post_times.append(time_str)
             
-            schedule.every().day.at(time_str).do(self.generate_and_post)
-            logger.info(f"Scheduled post at {time_str} UTC")
+            schedule.every().day.at(time_str).do(self.create_and_post_ai_post)
+            logger.info(f"Scheduled nano banana post at {time_str} UTC")
         
-        logger.info(f"✅ Scheduled {len(post_times)} daily posts from {post_times[0]} to {post_times[-1]} UTC")
+        logger.info(f"✅ Scheduled {len(post_times)} daily nano banana posts from {post_times[0]} to {post_times[-1]} UTC")
     
     def run_scheduler(self):
         """Run scheduler in background thread"""
+        logger.info("Starting nano banana scheduler thread...")
         while True:
             try:
                 schedule.run_pending()
                 time.sleep(60)  # Check every minute
             except Exception as e:
-                logger.error(f"Error in scheduler: {e}")
+                logger.error(f"Error in nano banana scheduler: {e}")
                 time.sleep(60)
 
 # Flask app setup
@@ -350,7 +359,7 @@ def health():
 def main():
     """Main entry point"""
     try:
-        # Initialize bot
+        # Initialize nano banana bot
         bot = AIPostBot()
         bot.setup_schedule()
         
@@ -358,15 +367,15 @@ def main():
         scheduler_thread = threading.Thread(target=bot.run_scheduler, daemon=True)
         scheduler_thread.start()
         
-        # Get port from environment (Render.com sets PORT)
-        port = int(os.getenv('PORT', 8000))
+        # Get port from environment (Render.com sets PORT, default to 8000 for Replit)
+        port = int(os.getenv('PORT', 8000))  # Replit doesn't support 10000
         
         # Start Flask web server
         logger.info(f"🌐 Starting Flask web server on 0.0.0.0:{port}")
         app.run(host='0.0.0.0', port=port, debug=False)
         
     except Exception as e:
-        logger.error(f"Failed to start bot: {e}")
+        logger.error(f"Failed to start nano banana AI bot: {e}")
         exit(1)
 
 if __name__ == "__main__":
