@@ -342,6 +342,11 @@ def index():
     """Root endpoint returning JSON status"""
     return {"status": "alive"}
 
+@app.route('/health')
+def health():
+    """Health check endpoint"""
+    return {"status": "healthy"}
+
 def main():
     """Main entry point"""
     try:
@@ -354,7 +359,7 @@ def main():
         scheduler_thread.start()
         
         # Get port from environment (Render.com sets PORT)
-        port = int(os.getenv('PORT', 5000))
+        port = int(os.getenv('PORT', 8000))
         
         # Start Flask web server
         logger.info(f"🌐 Starting Flask web server on 0.0.0.0:{port}")
