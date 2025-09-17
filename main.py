@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-AI Post Bot for Telegram - Production Ready
+AI Post Bot for Telegram - Render.com Web Service
 Generates 20 daily posts with AI content and images using Google Gemini models
-Optimized for Render.com deployment
+Optimized for Render.com Web Service deployment
 """
 
 import os
@@ -15,36 +15,12 @@ from datetime import datetime, timezone
 from io import BytesIO
 import logging
 import base64
+import json
 
 # Core libraries
 import google.generativeai as genai
 from PIL import Image, ImageDraw, ImageFont
 from flask import Flask, jsonify
-
-# Retry mechanism
-def retry_with_backoff(func, max_retries=3, backoff_factor=2, initial_delay=1):
-    """Retry function with exponential backoff"""
-    for attempt in range(max_retries):
-        try:
-            return func()
-        except requests.exceptions.RequestException as e:
-            if attempt == max_retries - 1:
-                logger.error(f"Max retries ({max_retries}) exceeded: {e}")
-                raise
-            
-            # Check if it's a retryable error
-            if hasattr(e, 'response') and e.response is not None:
-                status_code = e.response.status_code
-                if status_code < 500:  # Don't retry 4xx errors
-                    logger.error(f"Non-retryable error {status_code}: {e}")
-                    raise
-            
-            delay = initial_delay * (backoff_factor ** attempt)
-            logger.warning(f"Request failed (attempt {attempt + 1}/{max_retries}): {e}. Retrying in {delay}s...")
-            time.sleep(delay)
-        except Exception as e:
-            logger.error(f"Non-retryable error: {e}")
-            raise
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -66,7 +42,7 @@ class AIPostBot:
         # Initialize Telegram API URL
         self.telegram_api_url = f"https://api.telegram.org/bot{self.telegram_bot_token}"
         
-        # Post topics for AI content
+        # AI topics in Uzbek
         self.ai_topics = [
             "ChatGPT vs Gemini: qaysi biri yaxshiroq?",
             "AI promptlarni qanday yozish kerak?",
@@ -90,10 +66,10 @@ class AIPostBot:
             "AI tools for creative writing"
         ]
         
-        logger.info("🤖 AI Post Bot initialized successfully")
+        print("🤖 AI Post Bot Render.com Web Service da ishga tushdi. 07:00-21:00 UTC oralig'ida 20 ta post jo'natiladi.")
     
     def generate_uzbek_text(self, topic):
-        """Generate Uzbek text content about AI topics using Gemini with robust error handling"""
+        """Generate Uzbek text content about AI topics using Gemini"""
         try:
             prompt = f"""
 Mavzu: {topic}
@@ -111,28 +87,15 @@ Postda hashtag ishlatmang, faqat sof matn bo'lsin.
             logger.info(f"Generating Uzbek text for topic: {topic}")
             response = self.text_model.generate_content(prompt)
             
-            # Validate response
-            if not response:
-                logger.error("Gemini returned empty response for text generation")
-                raise ValueError("Empty response from Gemini")
+            if response and hasattr(response, 'text') and response.text:
+                generated_text = response.text.strip()
+                logger.info(f"Successfully generated {len(generated_text)} characters of Uzbek text")
+                return generated_text
+            else:
+                return self._get_fallback_text(topic)
                 
-            if not hasattr(response, 'text') or not response.text:
-                logger.error("Gemini response missing text attribute or empty text")
-                raise ValueError("Invalid response structure from Gemini")
-            
-            generated_text = response.text.strip()
-            if len(generated_text) < 50:  # Sanity check for minimum length
-                logger.warning(f"Generated text seems too short ({len(generated_text)} chars): {generated_text[:100]}...")
-            
-            logger.info(f"Successfully generated {len(generated_text)} characters of Uzbek text")
-            return generated_text
-            
-        except ValueError as e:
-            logger.error(f"Gemini API validation error: {e}")
-            return self._get_fallback_text(topic)
         except Exception as e:
-            logger.error(f"Unexpected error generating Uzbek text: {e}")
-            logger.error(f"Exception type: {type(e).__name__}")
+            logger.error(f"Error generating Uzbek text: {e}")
             return self._get_fallback_text(topic)
     
     def _get_fallback_text(self, topic):
@@ -145,91 +108,41 @@ Bu sohadagi yangiliklar va rivojlanishlar doimo kuzatib borish zarur. Profession
 
 Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?"""
     
-    def generate_nano_banana_image(self, topic):
-        """Generate image using Gemini 2.5 Flash Image with robust error handling"""
+    def generate_image_with_gemini(self, topic):
+        """Generate image using Gemini 2.5 Flash Image"""
         try:
-            logger.info(f"Initializing image generation model for topic: {topic}")
+            logger.info(f"Generating image with Gemini 2.5 Flash Image for topic: {topic}")
             
-            # Initialize image generation model with error checking
-            try:
-                image_model = genai.GenerativeModel('gemini-2.5-flash-image-preview')
-            except Exception as e:
-                logger.error(f"Failed to initialize Gemini image model: {e}")
-                return None
+            image_model = genai.GenerativeModel('gemini-2.5-flash-image-preview')
+            prompt = f"""Create a high-quality, educational infographic-style image about: '{topic}'. 
+Professional design with AI technology elements, modern graphics, clean layout, 
+futuristic style, technology icons, AI symbols, 16:9 aspect ratio, no text overlay."""
             
-            prompt = f"""Create a high-quality, educational infographic-style image about: '{topic}'. Visualize the concept using creative metaphors. Include a small, glowing nano-banana (1cm size, made of golden circuit boards and neon-blue wires, smiling, floating in zero gravity) as the central symbol of AI intelligence. Surround it with icons: brain, robot, code brackets, speech bubble with 'Prompt', lightbulb, gears. Background: soft gradient purple-cyan cosmic space. Style: futuristic educational infographic, clean vector art, professional design, no text overlay, 16:9 aspect ratio, ultra-detailed, photorealistic lighting."""
-            
-            logger.info("Sending image generation request to Gemini")
             response = image_model.generate_content(prompt)
             
-            # Comprehensive response validation
-            if not response:
-                logger.error("Gemini returned empty response for image generation")
-                return None
-            
-            if not hasattr(response, 'parts'):
-                logger.error("Gemini response missing 'parts' attribute")
-                return None
-                
-            if not response.parts:
-                logger.error("Gemini response has empty parts list")
-                return None
-                
-            logger.info(f"Received response with {len(response.parts)} parts")
-            
-            # Process response parts
-            for i, part in enumerate(response.parts):
-                logger.info(f"Processing part {i+1}/{len(response.parts)}")
-                
-                if not hasattr(part, 'inline_data'):
-                    logger.warning(f"Part {i+1} missing inline_data attribute")
-                    continue
-                    
-                if not part.inline_data:
-                    logger.warning(f"Part {i+1} has empty inline_data")
-                    continue
-                
-                if not hasattr(part.inline_data, 'data'):
-                    logger.warning(f"Part {i+1} inline_data missing data attribute")
-                    continue
-                
-                logger.info(f"Found valid inline_data in part {i+1}")
-                
-                # Decode base64 image data properly
-                try:
-                    image_data_b64 = part.inline_data.data
-                    if isinstance(image_data_b64, str):
-                        image_data = base64.b64decode(image_data_b64)
-                    else:
-                        # If already bytes, use directly
-                        image_data = image_data_b64
-                    
-                    if len(image_data) == 0:
-                        logger.error("Decoded image data is empty")
-                        continue
+            if response and hasattr(response, 'parts') and response.parts:
+                for part in response.parts:
+                    if hasattr(part, 'inline_data') and part.inline_data and hasattr(part.inline_data, 'data'):
+                        image_data_b64 = part.inline_data.data
+                        if isinstance(image_data_b64, str):
+                            image_data = base64.b64decode(image_data_b64)
+                        else:
+                            image_data = image_data_b64
                         
-                    logger.info(f"Successfully decoded image data: {len(image_data)} bytes")
-                    return BytesIO(image_data)
-                    
-                except Exception as decode_error:
-                    logger.error(f"Failed to decode image data from part {i+1}: {decode_error}")
-                    continue
+                        if len(image_data) > 0:
+                            logger.info(f"Successfully generated image: {len(image_data)} bytes")
+                            return BytesIO(image_data)
             
-            logger.warning("No valid image data found in any response part")
+            logger.warning("No valid image data found in Gemini response")
             return None
             
         except Exception as e:
-            logger.error(f"Unexpected error in image generation: {e}")
-            logger.error(f"Exception type: {type(e).__name__}")
-            # Log additional context for debugging
-            if hasattr(e, 'args') and e.args:
-                logger.error(f"Exception args: {e.args}")
+            logger.error(f"Error generating image with Gemini: {e}")
             return None
     
     def create_fallback_image(self, text):
-        """Create fallback image with text using PIL when AI generation fails"""
+        """Create fallback image with text using PIL"""
         try:
-            # Create image
             width, height = 1200, 675  # 16:9 aspect ratio
             img = Image.new('RGB', (width, height), color='#1a1a2e')
             draw = ImageDraw.Draw(img)
@@ -240,7 +153,7 @@ Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?"""
                 color = (gradient_color, gradient_color, 100 + int(55 * (y / height)))
                 draw.line([(0, y), (width, y)], fill=color)
             
-            # Try to use a system font, fallback to default
+            # Try to use system font
             try:
                 font_large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 48)
                 font_medium = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 32)
@@ -249,7 +162,7 @@ Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?"""
                 font_medium = ImageFont.load_default()
             
             # Add title
-            title = "AI Post - Nano Banana Bot"
+            title = "AI Post - Uzbek AI Channel"
             title_bbox = draw.textbbox((0, 0), title, font=font_large)
             title_width = title_bbox[2] - title_bbox[0]
             title_x = (width - title_width) // 2
@@ -291,12 +204,12 @@ Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?"""
                 draw.text((x, y_offset), line, fill='#ffffff', font=font_medium)
                 y_offset += line_height
             
-            # Add nano banana emoji representation
-            banana_text = "🍌✨🤖"
-            banana_bbox = draw.textbbox((0, 0), banana_text, font=font_large)
-            banana_width = banana_bbox[2] - banana_bbox[0]
-            banana_x = (width - banana_width) // 2
-            draw.text((banana_x, height - 100), banana_text, fill='#ffd700', font=font_large)
+            # Add AI emoji
+            ai_text = "🤖🧠💡"
+            ai_bbox = draw.textbbox((0, 0), ai_text, font=font_large)
+            ai_width = ai_bbox[2] - ai_bbox[0]
+            ai_x = (width - ai_width) // 2
+            draw.text((ai_x, height - 100), ai_text, fill='#ffd700', font=font_large)
             
             # Save to BytesIO
             img_buffer = BytesIO()
@@ -310,99 +223,44 @@ Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?"""
             return None
     
     def post_to_telegram(self, text, image_buffer):
-        """Post content to Telegram channel with proper caption length handling"""
+        """Post content to Telegram channel"""
         try:
-            TELEGRAM_CAPTION_LIMIT = 1024
-            
             if image_buffer:
                 image_buffer.seek(0)
                 
-                # Handle caption length limit
-                if len(text) <= TELEGRAM_CAPTION_LIMIT:
-                    # Send photo with full caption
-                    files = {'photo': ('image.png', image_buffer, 'image/png')}
-                    data = {
-                        'chat_id': self.telegram_channel_id,
-                        'caption': text
-                    }
-                    
-                    def send_photo():
-                        return requests.post(
-                            f"{self.telegram_api_url}/sendPhoto",
-                            files=files,
-                            data=data,
-                            timeout=30
-                        )
-                    
-                    response = retry_with_backoff(send_photo)
-                    if response.status_code == 200:
-                        logger.info("Posted to Telegram with image and full caption")
-                        return True
-                    else:
-                        logger.error(f"Telegram API error: {response.status_code} - {response.text}")
-                        return False
+                # Send photo with caption
+                files = {'photo': ('image.png', image_buffer, 'image/png')}
+                data = {
+                    'chat_id': self.telegram_channel_id,
+                    'caption': text[:1024]  # Telegram caption limit
+                }
+                
+                response = requests.post(
+                    f"{self.telegram_api_url}/sendPhoto",
+                    files=files,
+                    data=data,
+                    timeout=30
+                )
+                
+                if response.status_code == 200:
+                    logger.info("Posted to Telegram with image")
+                    return True
                 else:
-                    # Caption too long - send photo with truncated caption, then full text
-                    logger.info(f"Caption too long ({len(text)} chars), truncating and sending full text separately")
-                    
-                    # Create truncated caption
-                    truncated_caption = text[:TELEGRAM_CAPTION_LIMIT-20] + "... (davomi keyingi xabarda)"
-                    
-                    # Send photo with truncated caption
-                    files = {'photo': ('image.png', image_buffer, 'image/png')}
-                    data = {
-                        'chat_id': self.telegram_channel_id,
-                        'caption': truncated_caption
-                    }
-                    
-                    def send_photo_truncated():
-                        return requests.post(
-                            f"{self.telegram_api_url}/sendPhoto",
-                            files=files,
-                            data=data,
-                            timeout=30
-                        )
-                    
-                    response = retry_with_backoff(send_photo_truncated)
-                    if response.status_code != 200:
-                        logger.error(f"Telegram API error (photo): {response.status_code} - {response.text}")
-                        return False
-                    
-                    # Send full text as separate message
-                    data = {
-                        'chat_id': self.telegram_channel_id,
-                        'text': text
-                    }
-                    
-                    def send_full_text():
-                        return requests.post(
-                            f"{self.telegram_api_url}/sendMessage",
-                            data=data,
-                            timeout=30
-                        )
-                    
-                    response = retry_with_backoff(send_full_text)
-                    if response.status_code == 200:
-                        logger.info("Posted to Telegram with image and full text in separate message")
-                        return True
-                    else:
-                        logger.error(f"Telegram API error (text): {response.status_code} - {response.text}")
-                        return False
+                    logger.error(f"Telegram API error: {response.status_code} - {response.text}")
+                    return False
             else:
-                # Send text message using requests
+                # Send text message only
                 data = {
                     'chat_id': self.telegram_channel_id,
                     'text': text
                 }
                 
-                def send_text_only():
-                    return requests.post(
-                        f"{self.telegram_api_url}/sendMessage",
-                        data=data,
-                        timeout=30
-                    )
+                response = requests.post(
+                    f"{self.telegram_api_url}/sendMessage",
+                    data=data,
+                    timeout=30
+                )
                 
-                response = retry_with_backoff(send_text_only)
                 if response.status_code == 200:
                     logger.info("Posted to Telegram (text only)")
                     return True
@@ -424,12 +282,12 @@ Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?"""
             # Generate text content
             text_content = self.generate_uzbek_text(topic)
             
-            # Try to generate AI image first
-            image_buffer = self.generate_nano_banana_image(topic)
+            # Try to generate image with Gemini first
+            image_buffer = self.generate_image_with_gemini(topic)
             
-            # If AI image generation failed, create fallback image
+            # If Gemini image generation failed, create PIL fallback
             if not image_buffer:
-                logger.info("AI image generation failed, creating fallback image")
+                logger.info("Gemini image generation failed, creating PIL fallback image")
                 image_buffer = self.create_fallback_image(text_content[:200] + "...")
             
             # Post to Telegram
@@ -444,7 +302,7 @@ Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?"""
             logger.error(f"Error in generate_and_post: {e}")
     
     def setup_schedule(self):
-        """Setup posting schedule - 20 posts from 07:00 to 21:00 UTC (every 42 minutes)"""
+        """Setup posting schedule - 20 posts from 07:00 to 21:00 UTC (every ~42 minutes)"""
         post_times = []
         start_hour = 7
         end_hour = 21
@@ -466,61 +324,40 @@ Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?"""
         
         logger.info(f"✅ Scheduled {len(post_times)} daily posts from {post_times[0]} to {post_times[-1]} UTC")
     
-    def _scheduler_loop(self):
-        """Background scheduler loop"""
+    def run_scheduler(self):
+        """Run scheduler in background thread"""
         while True:
             try:
                 schedule.run_pending()
                 time.sleep(60)  # Check every minute
             except Exception as e:
-                logger.error(f"Error in scheduler loop: {e}")
-                time.sleep(60)  # Wait a minute before retrying
-    
-    def start_scheduler(self):
-        """Start scheduler in background thread"""
-        logger.info("🤖 AI Post Bot started on Render.com. Generating 20 posts daily from 07:00 to 21:00 UTC.")
-        
-        # Setup posting schedule
-        self.setup_schedule()
-        
-        # Check current time and log next post
-        now_utc = datetime.now(timezone.utc)
-        logger.info(f"Current UTC time: {now_utc.strftime('%H:%M:%S')}")
-        
-        # Start scheduler in background thread
-        scheduler_thread = threading.Thread(target=self._scheduler_loop, daemon=True)
-        scheduler_thread.start()
-        logger.info("✅ Scheduler started in background thread")
+                logger.error(f"Error in scheduler: {e}")
+                time.sleep(60)
 
 # Flask app setup
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    """Root endpoint"""
-    return "Nano Banana AI Bot is running! 🍌🤖"
-
-@app.route('/health')
-def health():
-    """Health check endpoint for Render.com"""
-    return jsonify({
-        "status": "ok",
-        "time": datetime.now(timezone.utc).isoformat(),
-        "service": "Nano Banana AI Bot"
-    })
+    """Root endpoint returning JSON status"""
+    return {"status": "alive"}
 
 def main():
     """Main entry point"""
     try:
-        # Initialize and start bot scheduler
+        # Initialize bot
         bot = AIPostBot()
-        bot.start_scheduler()
+        bot.setup_schedule()
         
-        # Get port from environment (Render.com sets PORT, Replit uses 5000)
+        # Start scheduler in background thread
+        scheduler_thread = threading.Thread(target=bot.run_scheduler, daemon=True)
+        scheduler_thread.start()
+        
+        # Get port from environment (Render.com sets PORT)
         port = int(os.getenv('PORT', 5000))
         
         # Start Flask web server
-        logger.info(f"🌐 Starting web server on 0.0.0.0:{port}")
+        logger.info(f"🌐 Starting Flask web server on 0.0.0.0:{port}")
         app.run(host='0.0.0.0', port=port, debug=False)
         
     except Exception as e:
