@@ -71,16 +71,18 @@ class AIPostBot:
     def generate_uzbek_text(self, topic):
         """Generate Uzbek text content about AI topics using Gemini 1.5 Flash"""
         try:
-            prompt = f"""O'zbek tilida, 200-300 so'z oralig'ida, o'qivchi uchun qiziqarli, oddiy, hayotiy misollar bilan, 
-AI ni o'rganish haqida ma'lumot ber. Mavzu: {topic}. 
-So'nggi qatorga: "➡️ {self.telegram_channel_id} kanaliga obuna bo'ling!" yozing.
+            prompt = f"""O'zbek tilida, 400-600 so'z oralig'ida, o'qivchi uchun qiziqarli, batafsil, hayotiy misollar bilan, 
+AI ni o'rganish haqida to'liq ma'lumot ber. Mavzu: {topic}. 
+So'nggi qatorga: "➡️ {str(self.telegram_channel_id)} kanaliga obuna bo'ling!" yozing.
 
 Talablar:
 - Oddiy va tushunarli til
-- Praktik maslahatlar berish
-- Misollar keltirish
+- Batafsil tushuntirish va praktik maslahatlar
+- Ko'proq misollar va bosqichma-bosqich yo'riqnoma
+- Aniq natijaviy ma'lumotlar berish
 - Savol bilan tugashi (engagement uchun)
 - Professional va do'stona ohang
+- Matnni to'liq yozish, qisqartirmaslik
 Postda hashtag ishlatmang, faqat sof matn bo'lsin."""
             
             logger.info(f"Generating Uzbek text for topic: {topic}")
@@ -307,30 +309,22 @@ SynthID watermark is allowed but must be subtle and in bottom-right corner."""
             return False
     
     def create_and_post_ai_post(self):
-        """Generate nano banana AI post and send to Telegram"""
+        """Generate detailed AI post and send as text-only to Telegram"""
         try:
             # Select random topic
             topic = random.choice(self.ai_topics)
-            logger.info(f"Creating nano banana AI post for topic: {topic}")
+            logger.info(f"Creating detailed AI text post for topic: {topic}")
             
-            # Generate Uzbek text content
+            # Generate detailed Uzbek text content
             text_content = self.generate_uzbek_text(topic)
             
-            # Try to generate nano banana image with Gemini 2.5 Flash Image Preview first
-            image_buffer = self.generate_nano_banana_image(topic)
-            
-            # If nano banana image generation failed, create PIL fallback
-            if not image_buffer:
-                logger.info("Nano banana image generation failed, creating PIL fallback image")
-                image_buffer = self.create_fallback_image(text_content)
-            
-            # Post to Telegram
-            success = self.post_to_telegram(text_content, image_buffer)
+            # Post to Telegram as text-only message (no images)
+            success = self.post_to_telegram(text_content, None)
             
             if success:
-                logger.info("✅ Nano banana AI post generated and published successfully")
+                logger.info("✅ Detailed AI text post published successfully")
             else:
-                logger.error("❌ Failed to publish nano banana AI post")
+                logger.error("❌ Failed to publish AI text post")
                 
         except Exception as e:
             logger.error(f"Error in create_and_post_ai_post: {e}")
