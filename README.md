@@ -5,7 +5,7 @@ This bot automatically generates 20 AI-themed posts daily (07:00–21:00 UTC) wi
 ## 🚀 How to Deploy on Render.com
 
 1. Go to [https://render.com](https://render.com) and sign up.
-2. Click **New +** → **Background Worker**
+2. Click **New +** → **Web Service**
 3. Connect your GitHub repo (or paste code manually)
 4. In **Environment Variables**, add:
    - `GOOGLE_API_KEY` → Your Google AI Studio API Key (get from [AI Studio](https://makersuite.google.com/app/apikey))
@@ -14,7 +14,10 @@ This bot automatically generates 20 AI-themed posts daily (07:00–21:00 UTC) wi
 5. **Build Command**: `pip install -r requirements.txt`
 6. **Start Command**: `python main.py`
 7. **Runtime**: `Python 3.10`
-8. Click **Create Background Worker**
+8. **Health Check Path**: `/health`
+9. Click **Create Web Service**
+
+💡 **Free Tier Note**: To keep your bot active 24/7 on the free plan, set up a free uptime monitor (like UptimeRobot) to ping your service URL every 5 minutes.
 
 ✅ Bot will start automatically and run 24/7!
 

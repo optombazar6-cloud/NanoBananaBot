@@ -10,6 +10,7 @@ import time
 import schedule
 import random
 import requests
+import threading
 from datetime import datetime, timezone
 from io import BytesIO
 import logging
@@ -18,6 +19,7 @@ import base64
 # Core libraries
 import google.generativeai as genai
 from PIL import Image, ImageDraw, ImageFont
+from flask import Flask, jsonify
 
 # Retry mechanism
 def retry_with_backoff(func, max_retries=3, backoff_factor=2, initial_delay=1):
@@ -464,8 +466,18 @@ Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?"""
         
         logger.info(f"✅ Scheduled {len(post_times)} daily posts from {post_times[0]} to {post_times[-1]} UTC")
     
-    def run(self):
-        """Main run loop"""
+    def _scheduler_loop(self):
+        """Background scheduler loop"""
+        while True:
+            try:
+                schedule.run_pending()
+                time.sleep(60)  # Check every minute
+            except Exception as e:
+                logger.error(f"Error in scheduler loop: {e}")
+                time.sleep(60)  # Wait a minute before retrying
+    
+    def start_scheduler(self):
+        """Start scheduler in background thread"""
         logger.info("🤖 AI Post Bot started on Render.com. Generating 20 posts daily from 07:00 to 21:00 UTC.")
         
         # Setup posting schedule
@@ -475,24 +487,42 @@ Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?"""
         now_utc = datetime.now(timezone.utc)
         logger.info(f"Current UTC time: {now_utc.strftime('%H:%M:%S')}")
         
-        # Run scheduler
-        while True:
-            try:
-                schedule.run_pending()
-                time.sleep(60)  # Check every minute
-                
-            except KeyboardInterrupt:
-                logger.info("Bot stopped by user")
-                break
-            except Exception as e:
-                logger.error(f"Error in main loop: {e}")
-                time.sleep(60)  # Wait a minute before retrying
+        # Start scheduler in background thread
+        scheduler_thread = threading.Thread(target=self._scheduler_loop, daemon=True)
+        scheduler_thread.start()
+        logger.info("✅ Scheduler started in background thread")
+
+# Flask app setup
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    """Root endpoint"""
+    return "Nano Banana AI Bot is running! 🍌🤖"
+
+@app.route('/health')
+def health():
+    """Health check endpoint for Render.com"""
+    return jsonify({
+        "status": "ok",
+        "time": datetime.now(timezone.utc).isoformat(),
+        "service": "Nano Banana AI Bot"
+    })
 
 def main():
     """Main entry point"""
     try:
+        # Initialize and start bot scheduler
         bot = AIPostBot()
-        bot.run()
+        bot.start_scheduler()
+        
+        # Get port from environment (Render.com sets PORT)
+        port = int(os.getenv('PORT', 10000))
+        
+        # Start Flask web server
+        logger.info(f"🌐 Starting web server on 0.0.0.0:{port}")
+        app.run(host='0.0.0.0', port=port, debug=False)
+        
     except Exception as e:
         logger.error(f"Failed to start bot: {e}")
         exit(1)
