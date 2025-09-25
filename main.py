@@ -113,7 +113,7 @@ MUHIM TALABLAR:
 6. Natija/foyda
 7. Savol (engagement)
 
-So'nggi qatorga: "➡️ {str(self.telegram_channel_id)} kanaliga obuna bo'ling!" yozing.
+So'nggi qatorga: "➡️ https://t.me/nanobanananews kanaliga obuna bo'ling!" yozing.
 
 Hashtag ishlatmang, faqat sof matn va emoji'lar bilan yozing."""
             
@@ -141,7 +141,7 @@ Bu sohadagi yangiliklar va rivojlanishlar doimo kuzatib borish zarur. Profession
 
 Sizning fikringizcha, AI texnologiyalari kelajakda qanday rivojlanadi?
 
-➡️ {self.telegram_channel_id} kanaliga obuna bo'ling!"""
+➡️ https://t.me/nanobanananews kanaliga obuna bo'ling!"""
     
     def generate_topic_image(self, topic):
         """Generate topic-related image using Gemini 2.5 Flash Image Preview (no text in image)"""
@@ -365,26 +365,67 @@ Composition: balanced, centered, with good contrast and visual hierarchy.
             if image_buffer:
                 image_buffer.seek(0)
                 
-                # Send photo with caption
-                files = {'photo': ('nano_banana_image.png', image_buffer, 'image/png')}
-                data = {
-                    'chat_id': self.telegram_channel_id,
-                    'caption': text[:1024]  # Telegram caption limit
-                }
-                
-                response = requests.post(
-                    f"{self.telegram_api_url}/sendPhoto",
-                    files=files,
-                    data=data,
-                    timeout=30
-                )
-                
-                if response.status_code == 200:
-                    logger.info("Posted nano banana content to Telegram with image")
-                    return True
+                # Check if text is too long for caption (1024 char limit)
+                if len(text) <= 1024:
+                    # Send photo with full caption
+                    files = {'photo': ('nano_banana_image.png', image_buffer, 'image/png')}
+                    data = {
+                        'chat_id': self.telegram_channel_id,
+                        'caption': text
+                    }
+                    
+                    response = requests.post(
+                        f"{self.telegram_api_url}/sendPhoto",
+                        files=files,
+                        data=data,
+                        timeout=30
+                    )
+                    
+                    if response.status_code == 200:
+                        logger.info("Posted complete content to Telegram with image")
+                        return True
+                    else:
+                        logger.error(f"Telegram API error: {response.status_code} - {response.text}")
+                        return False
                 else:
-                    logger.error(f"Telegram API error: {response.status_code} - {response.text}")
-                    return False
+                    # Text is too long, send image with short caption and full text separately
+                    # Send photo with short caption
+                    short_caption = "AI haqida qiziqarli ma'lumot 👇"
+                    files = {'photo': ('nano_banana_image.png', image_buffer, 'image/png')}
+                    data = {
+                        'chat_id': self.telegram_channel_id,
+                        'caption': short_caption
+                    }
+                    
+                    photo_response = requests.post(
+                        f"{self.telegram_api_url}/sendPhoto",
+                        files=files,
+                        data=data,
+                        timeout=30
+                    )
+                    
+                    if photo_response.status_code != 200:
+                        logger.error(f"Telegram photo API error: {photo_response.status_code} - {photo_response.text}")
+                        return False
+                    
+                    # Send full text as separate message
+                    text_data = {
+                        'chat_id': self.telegram_channel_id,
+                        'text': text
+                    }
+                    
+                    text_response = requests.post(
+                        f"{self.telegram_api_url}/sendMessage",
+                        data=text_data,
+                        timeout=30
+                    )
+                    
+                    if text_response.status_code == 200:
+                        logger.info("Posted long content to Telegram with image and separate text message")
+                        return True
+                    else:
+                        logger.error(f"Telegram text API error: {text_response.status_code} - {text_response.text}")
+                        return False
             else:
                 # Send text message only
                 data = {
