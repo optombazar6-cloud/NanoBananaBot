@@ -41,10 +41,19 @@ Preferred communication style: Simple, everyday language.
 - **Telegram Bot API**: Content delivery platform for publishing generated posts to channels
 
 ## Python Libraries
+- **Flask**: Web framework for API endpoints and health checks
 - **google-generativeai**: Google AI SDK for content generation
 - **Pillow (PIL)**: Image processing and fallback text-to-image rendering
 - **requests**: HTTP client for API communications  
 - **schedule**: Task scheduling for automated post timing
 
-## Deployment Platform
-- **Render.com**: Cloud hosting platform configured as background worker service
+## Replit Environment Setup
+- **Port Configuration**: Flask app runs on port 5000 (required for Replit)
+- **Host Configuration**: Binds to 0.0.0.0 to allow proxy access
+- **Environment Variables**: Gracefully handles missing API keys during development
+- **Health Endpoints**: `/health`, `/status`, `/test_post` for monitoring and testing
+
+## Required Environment Variables
+- `GOOGLE_API_KEY`: Google AI Studio API key for Gemini models
+- `TELEGRAM_BOT_TOKEN`: Bot token from @BotFather on Telegram
+- `TELEGRAM_CHANNEL_ID`: Target channel ID or username (e.g., @ai_learn_uz)
