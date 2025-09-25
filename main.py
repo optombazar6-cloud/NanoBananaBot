@@ -32,8 +32,18 @@ class AIPostBot:
         self.telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
         self.telegram_channel_id = os.getenv('TELEGRAM_CHANNEL_ID')
         
-        if not all([self.google_api_key, self.telegram_bot_token, self.telegram_channel_id]):
-            raise ValueError("Missing required environment variables: GOOGLE_API_KEY, TELEGRAM_BOT_TOKEN, TELEGRAM_CHANNEL_ID")
+        # Store missing vars for later validation
+        self.missing_vars = []
+        if not self.google_api_key:
+            self.missing_vars.append('GOOGLE_API_KEY')
+        if not self.telegram_bot_token:
+            self.missing_vars.append('TELEGRAM_BOT_TOKEN')
+        if not self.telegram_channel_id:
+            self.missing_vars.append('TELEGRAM_CHANNEL_ID')
+            
+        if self.missing_vars:
+            logger.warning(f"Missing environment variables: {', '.join(self.missing_vars)}. Bot functionality will be limited.")
+            return  # Don't initialize AI services without API keys
         
         # Initialize Google AI
         genai.configure(api_key=self.google_api_key)
@@ -475,11 +485,27 @@ def health():
     """Health check endpoint"""
     return {"status": "healthy"}
 
+@app.route('/status')
+def status():
+    """Status endpoint showing environment configuration"""
+    try:
+        bot = AIPostBot()
+        return {
+            "status": "running",
+            "environment_configured": len(bot.missing_vars) == 0,
+            "missing_variables": bot.missing_vars,
+            "scheduler_active": len(bot.missing_vars) == 0
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 @app.route('/test_post')
 def test_post():
     """Test endpoint to manually trigger a post"""
     try:
         bot = AIPostBot()
+        if bot.missing_vars:
+            return {"status": "error", "message": f"Missing environment variables: {', '.join(bot.missing_vars)}. Please configure them to enable bot functionality."}
         bot.create_and_post_ai_post()
         return {"status": "Test post sent successfully"}
     except Exception as e:
@@ -490,21 +516,26 @@ def main():
     try:
         # Initialize nano banana bot
         bot = AIPostBot()
-        bot.setup_schedule()
         
-        # Start scheduler in background thread
-        scheduler_thread = threading.Thread(target=bot.run_scheduler, daemon=True)
-        scheduler_thread.start()
+        # Only start scheduling if we have all required environment variables
+        if not bot.missing_vars:
+            bot.setup_schedule()
+            # Start scheduler in background thread
+            scheduler_thread = threading.Thread(target=bot.run_scheduler, daemon=True)
+            scheduler_thread.start()
+            logger.info("✅ Bot scheduler started successfully")
+        else:
+            logger.info("⚠️ Bot scheduler not started due to missing environment variables")
         
         # Get port from environment (default to 5000 for Replit)
         port = int(os.getenv('PORT', 5000))  # Use port 5000 for Replit frontend
         
-        # Start Flask web server
+        # Start Flask web server (always start this for health checks)
         logger.info(f"🌐 Starting Flask web server on 0.0.0.0:{port}")
         app.run(host='0.0.0.0', port=port, debug=False)
         
     except Exception as e:
-        logger.error(f"Failed to start nano banana AI bot: {e}")
+        logger.error(f"Failed to start application: {e}")
         exit(1)
 
 if __name__ == "__main__":
